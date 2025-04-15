@@ -1,0 +1,8 @@
+com/jobmanagement/controller/UserController.class
+com/jobmanagement/service/UserService.class
+com/jobmanagement/model/Role.class
+com/jobmanagement/model/User.class
+com/jobmanagement/repository/UserRepository.class
+com/jobmanagement/dto/UserRegistrationDto.class
+com/jobmanagement/config/SecurityConfig.class
+com/jobmanagement/JobManagementSystemApplication.class

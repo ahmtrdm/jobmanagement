@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>İşveren Paneli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .job-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column">
+                    <div class="text-center mb-4">
+                        <h4>İşveren Paneli</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/employer/dashboard">
+                                <i class="fas fa-home"></i> Ana Sayfa
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/employer/jobs/create">
+                                <i class="fas fa-plus-circle"></i> İlan Oluştur
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/employer/jobs">
+                                <i class="fas fa-briefcase"></i> İlanlarım
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/employer/applications">
+                                <i class="fas fa-file-alt"></i> Başvurular
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/employer/profile">
+                                <i class="fas fa-user"></i> Profil
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">
+                                <i class="fas fa-sign-out-alt"></i> Çıkış
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h5>Aktif İlanlar</h5>
+                            <h2 class="text-primary" th:text="${activeJobPostings}">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h5>Toplam Başvuru</h5>
+                            <h2 class="text-success" th:text="${totalApplications}">0</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card">
+                            <h5>Bekleyen Başvuru</h5>
+                            <h2 class="text-warning" th:text="${pendingApplications}">0</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Son İlanlarım</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>İlan Başlığı</th>
+                                                <th>Tarih</th>
+                                                <th>Durum</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="job : ${recentJobPostings}">
+                                                <td th:text="${job.title}">İlan Başlığı</td>
+                                                <td th:text="${#temporals.format(job.postedDate, 'dd/MM/yyyy')}">Tarih</td>
+                                                <td>
+                                                    <span class="badge" th:classappend="${job.active ? 'bg-success' : 'bg-danger'}"
+                                                          th:text="${job.active ? 'Aktif' : 'Pasif'}">Durum</span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary">Düzenle</button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Son Başvurular</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>İlan</th>
+                                                <th>Başvuran</th>
+                                                <th>Tarih</th>
+                                                <th>Durum</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="application : ${recentApplications}">
+                                                <td th:text="${application.jobPosting.title}">İlan Başlığı</td>
+                                                <td th:text="${application.workerUsername}">Başvuran</td>
+                                                <td th:text="${#temporals.format(application.applicationDate, 'dd/MM/yyyy')}">Tarih</td>
+                                                <td>
+                                                    <span class="badge" th:classappend="${application.status == 'PENDING' ? 'bg-warning' : 
+                                                                                        (application.status == 'APPROVED' ? 'bg-success' : 'bg-danger')}"
+                                                          th:text="${application.status == 'PENDING' ? 'Beklemede' : 
+                                                                   (application.status == 'APPROVED' ? 'Onaylandı' : 'Reddedildi')}">Durum</span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-primary" 
+                                                            th:onclick="'viewApplication(' + ${application.id} + ')'">
+                                                        İncele
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function viewApplication(id) {
+            window.location.href = '/employer/applications/' + id;
+        }
+    </script>
+</body>
+</html> 

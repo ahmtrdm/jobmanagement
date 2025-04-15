@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>İlanlarım</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .job-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+        .job-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column">
+                    <div class="text-center mb-4">
+                        <h4>İşveren Paneli</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/dashboard}">
+                                <i class="bi bi-house-door"></i> Ana Sayfa
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/create-job}">
+                                <i class="bi bi-plus-circle"></i> İş İlanı Oluştur
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-file-text"></i> İlanlarım
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/applications}">
+                                <i class="bi bi-people"></i> Başvurular
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/profile}">
+                                <i class="bi bi-gear"></i> Ayarlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>İlanlarım</h3>
+                    <a th:href="@{/employer/create-job}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Yeni İlan Oluştur
+                    </a>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>İlan Başlığı</th>
+                                        <th>Şirket</th>
+                                        <th>Konum</th>
+                                        <th>Yayın Tarihi</th>
+                                        <th>Son Başvuru</th>
+                                        <th>Durum</th>
+                                        <th>Başvuru Sayısı</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="job : ${jobPostings}">
+                                        <td th:text="${job.title}">İlan Başlığı</td>
+                                        <td th:text="${job.companyName}">Şirket Adı</td>
+                                        <td th:text="${job.location}">Konum</td>
+                                        <td th:text="${#temporals.format(job.postedDate, 'dd/MM/yyyy')}">Yayın Tarihi</td>
+                                        <td th:text="${#temporals.format(job.expiryDate, 'dd/MM/yyyy')}">Son Başvuru</td>
+                                        <td>
+                                            <span class="badge" th:classappend="${job.active ? 'bg-success' : 'bg-danger'}"
+                                                  th:text="${job.active ? 'Aktif' : 'Pasif'}">Durum</span>
+                                        </td>
+                                        <td>
+                                            <a th:href="@{/employer/applications/{jobId}(jobId=${job.id})}" 
+                                               class="btn btn-sm btn-info">
+                                                <i class="bi bi-people"></i>
+                                                <span th:text="${job.applicationCount}">0</span>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-sm btn-primary me-1" 
+                                                        th:onclick="'editJob(' + ${job.id} + ')'">
+                                                    Düzenle
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" 
+                                                        th:onclick="'deleteJob(' + ${job.id} + ')'">
+                                                    Sil
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function editJob(id) {
+            window.location.href = '/employer/jobs/' + id + '/edit';
+        }
+
+        function deleteJob(id) {
+            if (confirm('Bu ilanı silmek istediğinizden emin misiniz?')) {
+                fetch('/employer/jobs/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('İlan silinirken bir hata oluştu.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('İlan silinirken bir hata oluştu.');
+                });
+            }
+        }
+    </script>
+</body>
+</html> 

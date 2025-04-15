@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Başvuru Detayı</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background-color: #f8f9fa;
+            padding-top: 20px;
+        }
+        .sidebar .nav-link {
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef;
+        }
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .main-content {
+            padding: 20px;
+        }
+        .info-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-card h5 {
+            color: #0d6efd;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .info-item {
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #6c757d;
+        }
+        .status-badge {
+            font-size: 1rem;
+            padding: 8px 15px;
+        }
+        .skill-badge {
+            margin-right: 5px;
+            margin-bottom: 5px;
+            background-color: #e9ecef;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="d-flex flex-column">
+                    <div class="text-center mb-4">
+                        <h4>İşveren Paneli</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/dashboard}">
+                                <i class="bi bi-house-door"></i> Ana Sayfa
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/create-job}">
+                                <i class="bi bi-plus-circle"></i> İş İlanı Oluştur
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/job-postings}">
+                                <i class="bi bi-file-text"></i> İlanlarım
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" th:href="@{/employer/applications}">
+                                <i class="bi bi-people"></i> Başvurular
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/employer/profile}">
+                                <i class="bi bi-gear"></i> Ayarlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Başvuru Detayı</h3>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                            <i class="bi bi-arrow-left"></i> Geri Dön
+                        </button>
+                        <button class="btn btn-success" th:onclick="'approveApplication(' + ${application.id} + ')'"
+                                th:disabled="${application.status == 'APPROVED'}">
+                            <i class="bi bi-check"></i> Onayla
+                        </button>
+                        <button class="btn btn-danger" th:onclick="'rejectApplication(' + ${application.id} + ')'"
+                                th:disabled="${application.status == 'REJECTED'}">
+                            <i class="bi bi-x"></i> Reddet
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Başvuru Durumu -->
+                <div class="info-card">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5>Başvuru Durumu</h5>
+                        <span class="status-badge badge" 
+                              th:classappend="${application.status == 'PENDING' ? 'bg-warning' : 
+                                            (application.status == 'APPROVED' ? 'bg-success' : 'bg-danger')}"
+                              th:text="${application.status == 'PENDING' ? 'Beklemede' : 
+                                       (application.status == 'APPROVED' ? 'Onaylandı' : 'Reddedildi')}">
+                            Durum
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Başvuru Tarihi:</span>
+                        <span th:text="${#temporals.format(application.applicationDate, 'dd/MM/yyyy HH:mm')}">Tarih</span>
+                    </div>
+                    <div class="info-item" th:if="${application.status != 'PENDING'}">
+                        <span class="info-label">İşlem Tarihi:</span>
+                        <span th:text="${#temporals.format(application.processedDate, 'dd/MM/yyyy HH:mm')}">Tarih</span>
+                    </div>
+                </div>
+
+                <!-- İş İlanı Bilgileri -->
+                <div class="info-card">
+                    <h5>İş İlanı Bilgileri</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">İlan Başlığı:</span>
+                                <span th:text="${application.jobPosting.title}">İlan Başlığı</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Şirket:</span>
+                                <span th:text="${application.jobPosting.companyName}">Şirket Adı</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Konum:</span>
+                                <span th:text="${application.jobPosting.location}">Konum</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Çalışma Tipi:</span>
+                                <span th:text="${application.jobPosting.jobType}">Çalışma Tipi</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Deneyim Seviyesi:</span>
+                                <span th:text="${application.jobPosting.experienceLevel}">Deneyim Seviyesi</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Maaş Aralığı:</span>
+                                <span th:text="${application.jobPosting.salary}">Maaş Aralığı</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">İş Tanımı:</span>
+                        <p th:text="${application.jobPosting.description}">İş tanımı burada yer alacak.</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Gerekli Yetenekler:</span>
+                        <div>
+                            <span th:each="skill : ${#strings.arraySplit(application.jobPosting.requiredSkills, ',')}"
+                                  class="badge skill-badge" th:text="${skill}">Yetenek</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Başvuran Bilgileri -->
+                <div class="info-card">
+                    <h5>Başvuran Bilgileri</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Ad Soyad:</span>
+                                <span th:text="${application.workerProfile.fullName}">Ad Soyad</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">E-posta:</span>
+                                <span th:text="${application.workerProfile.email}">E-posta</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Telefon:</span>
+                                <span th:text="${application.workerProfile.phone}">Telefon</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="info-item">
+                                <span class="info-label">Konum:</span>
+                                <span th:text="${application.workerProfile.location}">Konum</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Deneyim:</span>
+                                <span th:text="${application.workerProfile.experienceYears} + ' yıl'">Deneyim</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Eğitim:</span>
+                                <span th:text="${application.workerProfile.education}">Eğitim</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Özgeçmiş:</span>
+                        <p th:text="${application.workerProfile.summary}">Özgeçmiş burada yer alacak.</p>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Yetenekler:</span>
+                        <div>
+                            <span th:each="skill : ${#strings.arraySplit(application.workerProfile.skills, ',')}"
+                                  class="badge skill-badge" th:text="${skill}">Yetenek</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Başvuru Notları -->
+                <div class="info-card">
+                    <h5>Başvuru Notları</h5>
+                    <div class="info-item">
+                        <span class="info-label">Başvuru Mesajı:</span>
+                        <p th:text="${application.coverLetter}">Başvuru mesajı burada yer alacak.</p>
+                    </div>
+                    <div class="info-item" th:if="${application.status != 'PENDING'}">
+                        <span class="info-label">Değerlendirme Notu:</span>
+                        <p th:text="${application.employerNotes}">Değerlendirme notu burada yer alacak.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function approveApplication(applicationId) {
+            if (confirm('Bu başvuruyu onaylamak istediğinizden emin misiniz?')) {
+                fetch('/employer/applications/' + applicationId + '/approve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Başvuru onaylanırken bir hata oluştu.');
+                    }
+                });
+            }
+        }
+
+        function rejectApplication(applicationId) {
+            if (confirm('Bu başvuruyu reddetmek istediğinizden emin misiniz?')) {
+                fetch('/employer/applications/' + applicationId + '/reject', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.reload();
+                    } else {
+                        alert('Başvuru reddedilirken bir hata oluştu.');
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html> 
