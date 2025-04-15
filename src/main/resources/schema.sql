@@ -1,4 +1,4 @@
--- Kullanıcılar tablosu
+-- USERS
 CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(50) PRIMARY KEY,
     password VARCHAR(100) NOT NULL,
@@ -6,54 +6,69 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) NOT NULL
 );
 
--- İşveren profilleri tablosu
+-- EMPLOYER PROFILES
 CREATE TABLE IF NOT EXISTS employer_profiles (
-    username VARCHAR(50) PRIMARY KEY REFERENCES users(username),
-    company_name VARCHAR(100),
-    phone VARCHAR(20),
-    address TEXT,
-    description TEXT,
-    image_url VARCHAR(255)
-);
-
--- İşçi profilleri tablosu
-CREATE TABLE IF NOT EXISTS worker_profiles (
-    username VARCHAR(50) PRIMARY KEY REFERENCES users(username),
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL REFERENCES users(username),
     first_name VARCHAR(50),
     last_name VARCHAR(50),
+    company_name VARCHAR(100),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    address TEXT,
+    website VARCHAR(255),
+    description TEXT,
+    image_url VARCHAR(255),
+    company_logo VARCHAR(255),
+    company_size VARCHAR(50),
+    company_industry VARCHAR(100),
+    city VARCHAR(50),
+    country VARCHAR(50),
+    postal_code VARCHAR(20),
+    email_notifications BOOLEAN DEFAULT FALSE,
+    sms_notifications BOOLEAN DEFAULT FALSE,
+    application_emails BOOLEAN DEFAULT FALSE,
+    marketing_emails BOOLEAN DEFAULT FALSE
+);
+
+-- WORKER PROFILES
+CREATE TABLE IF NOT EXISTS worker_profiles (
+    username VARCHAR(50) PRIMARY KEY REFERENCES users(username),
+    full_name VARCHAR(100),
+    email VARCHAR(100),
     phone VARCHAR(20),
     address TEXT,
     skills TEXT,
-    experience TEXT,
-    education TEXT,
-    image_url VARCHAR(255)
+    job_types TEXT,
+    preferred_locations TEXT,
+    image_url VARCHAR(255),
+    resume_url VARCHAR(255)
 );
 
--- İş ilanları tablosu
+-- JOB POSTINGS
 CREATE TABLE IF NOT EXISTS job_postings (
-    id BIGSERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description TEXT NOT NULL,
     company_name VARCHAR(100) NOT NULL,
     location VARCHAR(100),
-    salary DECIMAL(10,2),
+    salary VARCHAR(50),
     job_type VARCHAR(50),
     experience_level VARCHAR(50),
     required_skills TEXT,
     posting_date DATE NOT NULL,
     expiry_date DATE,
     application_deadline DATE,
-    active BOOLEAN DEFAULT true,
-    employer_username VARCHAR(50) REFERENCES users(username)
+    active BOOLEAN DEFAULT TRUE,
+    employer_username VARCHAR(50) NOT NULL REFERENCES employer_profiles(username)
 );
 
--- İş başvuruları tablosu
+-- JOB APPLICATIONS
 CREATE TABLE IF NOT EXISTS job_applications (
-    id BIGSERIAL PRIMARY KEY,
-    job_posting_id BIGINT REFERENCES job_postings(id),
-    worker_username VARCHAR(50) REFERENCES users(username),
-    application_date DATE NOT NULL,
+    id SERIAL PRIMARY KEY,
+    job_posting_id INTEGER NOT NULL REFERENCES job_postings(id) ON DELETE CASCADE,
+    worker_username VARCHAR(50) NOT NULL REFERENCES worker_profiles(username),
+    application_date TIMESTAMP NOT NULL,
     status VARCHAR(20) DEFAULT 'PENDING',
-    cover_letter TEXT,
-    UNIQUE(job_posting_id, worker_username)
+    cover_letter TEXT
 ); 
