@@ -30,6 +30,9 @@ public class EmployerProfile {
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "title")
+    private String title;
+
     @Column(name = "address")
     private String address;
 
