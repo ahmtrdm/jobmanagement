@@ -15,6 +15,12 @@ public class EmployerProfile {
     @Column(name = "username", unique = true)
     private String username;
 
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
+
     @Column(name = "company_name")
     private String companyName;
 
@@ -35,6 +41,9 @@ public class EmployerProfile {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(name = "company_logo")
+    private String companyLogo;
 
     @Column(name = "company_size")
     private String companySize;

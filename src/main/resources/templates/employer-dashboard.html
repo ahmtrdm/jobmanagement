@@ -57,33 +57,33 @@
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link active" href="/employer/dashboard">
-                                <i class="fas fa-home"></i> Ana Sayfa
+                            <a class="nav-link active" th:href="@{/employer/dashboard}">
+                                <i class="bi bi-house-door"></i> Ana Sayfa
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/employer/jobs/create">
-                                <i class="fas fa-plus-circle"></i> İlan Oluştur
+                            <a class="nav-link" th:href="@{/employer/create-job}">
+                                <i class="bi bi-plus-circle"></i> İş İlanı Oluştur
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/employer/jobs">
-                                <i class="fas fa-briefcase"></i> İlanlarım
+                            <a class="nav-link" th:href="@{/employer/job-postings}">
+                                <i class="bi bi-briefcase"></i> İlanlarım
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/employer/applications">
-                                <i class="fas fa-file-alt"></i> Başvurular
+                            <a class="nav-link" th:href="@{/employer/applications}">
+                                <i class="bi bi-file-text"></i> Başvurular
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/employer/profile">
-                                <i class="fas fa-user"></i> Profil
+                            <a class="nav-link" th:href="@{/employer/profile}">
+                                <i class="bi bi-gear"></i> Ayarlar
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/logout">
-                                <i class="fas fa-sign-out-alt"></i> Çıkış
+                            <a class="nav-link" th:href="@{/logout}">
+                                <i class="bi bi-box-arrow-right"></i> Çıkış Yap
                             </a>
                         </li>
                     </ul>

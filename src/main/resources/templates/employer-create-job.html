@@ -47,17 +47,17 @@
                     </div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" href="/employer/dashboard">
+                            <a class="nav-link" th:href="@{/employer/dashboard}">
                                 <i class="fas fa-home"></i> Ana Sayfa
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/employer/jobs/create">
+                            <a class="nav-link active" th:href="@{/employer/create-job}">
                                 <i class="fas fa-plus-circle"></i> İlan Oluştur
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/employer/jobs">
+                            <a class="nav-link" th:href="@{/employer/job-postings}">
                                 <i class="fas fa-briefcase"></i> İlanlarım
                             </a>
                         </li>
@@ -84,10 +84,15 @@
             <div class="col-md-9 col-lg-10 main-content">
                 <div class="form-container">
                     <h2 class="mb-4">Yeni İş İlanı Oluştur</h2>
-                    <form th:action="@{/employer/jobs/create}" th:object="${jobPosting}" method="post">
+                    <form th:action="@{/employer/create-job}" th:object="${jobPosting}" method="post">
                         <div class="mb-3">
                             <label for="title" class="form-label">İlan Başlığı</label>
                             <input type="text" class="form-control" id="title" th:field="*{title}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="companyName" class="form-label">Şirket Adı</label>
+                            <input type="text" class="form-control" id="companyName" th:field="*{companyName}" required>
                         </div>
                         
                         <div class="mb-3">
@@ -143,6 +148,11 @@
                         <div class="mb-3">
                             <label for="applicationDeadline" class="form-label">Son Başvuru Tarihi</label>
                             <input type="date" class="form-control" id="applicationDeadline" th:field="*{applicationDeadline}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="expiryDate" class="form-label">İlan Bitiş Tarihi</label>
+                            <input type="date" class="form-control" id="expiryDate" th:field="*{expiryDate}" required>
                         </div>
                         
                         <div class="d-grid gap-2">

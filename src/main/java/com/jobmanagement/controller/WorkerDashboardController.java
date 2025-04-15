@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
@@ -131,7 +132,7 @@ public class WorkerDashboardController {
             // Parse skills from JSON
             if (skillsJson != null && !skillsJson.isEmpty()) {
                 try {
-                    List<String> skills = objectMapper.readValue(skillsJson, List.class);
+                    List<String> skills = objectMapper.readValue(skillsJson, new TypeReference<List<String>>() {});
                     profile.setSkills(skills);
                 } catch (Exception e) {
                     // If JSON parsing fails, set empty list
@@ -164,5 +165,26 @@ public class WorkerDashboardController {
         } catch (Exception e) {
             return "redirect:/worker/profile?error=" + e.getMessage();
         }
+    }
+
+    @PostMapping("/jobs/{id}/apply")
+    public String applyForJob(@PathVariable Long id, @RequestParam String coverLetter, Authentication authentication) {
+        String username = authentication.getName();
+        workerDashboardService.applyForJob(id, username, coverLetter);
+        return "redirect:/worker/applications";
+    }
+
+    @PostMapping("/applications/{id}/status")
+    public String updateApplicationStatus(@PathVariable Long id, @RequestParam String status, Authentication authentication) {
+        String username = authentication.getName();
+        workerDashboardService.updateApplicationStatus(id, username, status);
+        return "redirect:/worker/applications";
+    }
+
+    @GetMapping("/jobs/search")
+    public String searchJobs(@RequestParam String query, Authentication authentication, Model model) {
+        String username = authentication.getName();
+        model.addAttribute("jobs", workerDashboardService.searchJobs(username, query));
+        return "worker-jobs";
     }
 } 

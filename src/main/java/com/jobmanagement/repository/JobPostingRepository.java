@@ -28,4 +28,6 @@ public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
     List<JobPosting> findByEmployerUsername(String employerUsername);
     List<JobPosting> findTop5ByEmployerUsernameOrderByPostingDateDesc(String employerUsername);
     int countByEmployerUsernameAndActiveTrue(String employerUsername);
+    List<JobPosting> findByEmployerUsernameAndTitleContainingIgnoreCase(String username, String title);
+    List<JobPosting> findByTitleContainingIgnoreCase(String title);
 } 

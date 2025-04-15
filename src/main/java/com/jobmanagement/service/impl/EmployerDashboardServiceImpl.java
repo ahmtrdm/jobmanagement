@@ -83,4 +83,29 @@ public class EmployerDashboardServiceImpl implements EmployerDashboardService {
         jobPosting.setActive(true);
         jobPostingRepository.save(jobPosting);
     }
+
+    @Override
+    public JobPosting getJobPostingById(Long id) {
+        return jobPostingRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void updateJobPosting(JobPosting jobPosting) {
+        jobPostingRepository.save(jobPosting);
+    }
+
+    @Override
+    public void deleteJobPosting(Long id) {
+        jobPostingRepository.deleteById(id);
+    }
+
+    @Override
+    public void updateEmployerProfile(EmployerProfile profile) {
+        employerProfileRepository.save(profile);
+    }
+
+    @Override
+    public List<JobPosting> searchJobPostings(String username, String query) {
+        return jobPostingRepository.findByEmployerUsernameAndTitleContainingIgnoreCase(username, query);
+    }
 } 

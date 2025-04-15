@@ -133,16 +133,16 @@
                     </button>
                 </div>
 
-                <form id="profileForm">
+                <form id="profileForm" th:object="${profile}" th:action="@{/employer/profile}" method="post" enctype="multipart/form-data">
                     <!-- Kişisel Bilgiler -->
                     <div class="profile-section">
                         <h4 class="mb-4">Kişisel Bilgiler</h4>
                         <div class="row">
                             <div class="col-md-3 text-center mb-4">
-                                <img th:src="${profile.imageUrl}" class="profile-image mb-3" 
-                                     id="profileImagePreview" alt="Profil Fotoğrafı">
+                                <img th:src="${profile?.imageUrl != null ? profile.imageUrl : '/images/default-profile.png'}" 
+                                     class="profile-image mb-3" id="profileImagePreview" alt="Profil Fotoğrafı">
                                 <div class="mb-3">
-                                    <input type="file" class="form-control" id="profileImage" 
+                                    <input type="file" class="form-control" id="profileImage" name="profileImage" 
                                            accept="image/*" onchange="previewImage(this, 'profileImagePreview')">
                                 </div>
                             </div>
@@ -151,30 +151,30 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="firstName" class="form-label required-field">Ad</label>
                                         <input type="text" class="form-control" id="firstName" 
-                                               th:value="${profile.firstName}" required>
+                                               th:field="*{firstName}" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="lastName" class="form-label required-field">Soyad</label>
                                         <input type="text" class="form-control" id="lastName" 
-                                               th:value="${profile.lastName}" required>
+                                               th:field="*{lastName}" required>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="email" class="form-label required-field">E-posta</label>
-                                        <input type="email" class="form-control" id="email" 
-                                               th:value="${profile.email}" required>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               th:field="*{email}" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="phone" class="form-label">Telefon</label>
-                                        <input type="tel" class="form-control" id="phone" 
-                                               th:value="${profile.phone}">
+                                        <input type="tel" class="form-control" id="phone" name="phone" 
+                                               th:field="*{phone}">
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="title" class="form-label">Ünvan</label>
                                     <input type="text" class="form-control" id="title" 
-                                           th:value="${profile.title}">
+                                           th:field="*{title}">
                                 </div>
                             </div>
                         </div>
@@ -185,54 +185,46 @@
                         <h4 class="mb-4">Şirket Bilgileri</h4>
                         <div class="row">
                             <div class="col-md-3 text-center mb-4">
-                                <img th:src="${profile.companyLogo}" class="company-logo mb-3" 
-                                     id="companyLogoPreview" alt="Şirket Logosu">
+                                <img th:src="${profile?.companyLogo != null ? profile.companyLogo : '/images/default-company.png'}" 
+                                     class="company-logo mb-3" id="companyLogoPreview" alt="Şirket Logosu">
                                 <div class="mb-3">
-                                    <input type="file" class="form-control" id="companyLogo" 
+                                    <input type="file" class="form-control" id="companyLogo" name="companyLogo" 
                                            accept="image/*" onchange="previewImage(this, 'companyLogoPreview')">
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="mb-3">
                                     <label for="companyName" class="form-label required-field">Şirket Adı</label>
-                                    <input type="text" class="form-control" id="companyName" 
-                                           th:value="${employer.companyName}" required>
+                                    <input type="text" class="form-control" id="companyName" name="companyName" 
+                                           th:field="*{companyName}" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="companyWebsite" class="form-label">Şirket Web Sitesi</label>
-                                    <input type="url" class="form-control" id="companyWebsite" 
-                                           th:value="${employer.website}">
+                                    <label for="website" class="form-label">Şirket Web Sitesi</label>
+                                    <input type="url" class="form-control" id="website" 
+                                           th:field="*{website}">
                                 </div>
                                 <div class="mb-3">
-                                    <label for="companyDescription" class="form-label">Şirket Açıklaması</label>
-                                    <textarea class="form-control" id="companyDescription" rows="4" 
-                                              th:text="${employer.description}"></textarea>
+                                    <label for="description" class="form-label">Şirket Açıklaması</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" 
+                                              th:field="*{description}"></textarea>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="companySize" class="form-label">Çalışan Sayısı</label>
-                                        <select class="form-select" id="companySize">
+                                        <select class="form-select" id="companySize" th:field="*{companySize}">
                                             <option value="">Seçiniz</option>
-                                            <option value="1-10" th:selected="${profile.companySize == '1-10'}">1-10</option>
-                                            <option value="11-50" th:selected="${profile.companySize == '11-50'}">11-50</option>
-                                            <option value="51-200" th:selected="${profile.companySize == '51-200'}">51-200</option>
-                                            <option value="201-500" th:selected="${profile.companySize == '201-500'}">201-500</option>
-                                            <option value="501-1000" th:selected="${profile.companySize == '501-1000'}">501-1000</option>
-                                            <option value="1000+" th:selected="${profile.companySize == '1000+'}">1000+</option>
+                                            <option value="1-10">1-10</option>
+                                            <option value="11-50">11-50</option>
+                                            <option value="51-200">51-200</option>
+                                            <option value="201-500">201-500</option>
+                                            <option value="501-1000">501-1000</option>
+                                            <option value="1000+">1000+</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="companyIndustry" class="form-label">Sektör</label>
-                                        <select class="form-select" id="companyIndustry">
-                                            <option value="">Seçiniz</option>
-                                            <option value="IT" th:selected="${profile.companyIndustry == 'IT'}">Bilişim</option>
-                                            <option value="FINANCE" th:selected="${profile.companyIndustry == 'FINANCE'}">Finans</option>
-                                            <option value="HEALTHCARE" th:selected="${profile.companyIndustry == 'HEALTHCARE'}">Sağlık</option>
-                                            <option value="EDUCATION" th:selected="${profile.companyIndustry == 'EDUCATION'}">Eğitim</option>
-                                            <option value="RETAIL" th:selected="${profile.companyIndustry == 'RETAIL'}">Perakende</option>
-                                            <option value="MANUFACTURING" th:selected="${profile.companyIndustry == 'MANUFACTURING'}">Üretim</option>
-                                            <option value="OTHER" th:selected="${profile.companyIndustry == 'OTHER'}">Diğer</option>
-                                        </select>
+                                        <input type="text" class="form-control" id="industry" name="industry" 
+                                               th:value="${profile.industry}">
                                     </div>
                                 </div>
                             </div>
@@ -246,25 +238,25 @@
                             <div class="col-md-6 mb-3">
                                 <label for="address" class="form-label">Adres</label>
                                 <textarea class="form-control" id="address" rows="3" 
-                                          th:text="${profile.address}"></textarea>
+                                          th:field="*{address}"></textarea>
                             </div>
                             <div class="col-md-6">
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="city" class="form-label">Şehir</label>
                                         <input type="text" class="form-control" id="city" 
-                                               th:value="${profile.city}">
+                                               th:field="*{city}">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="country" class="form-label">Ülke</label>
                                         <input type="text" class="form-control" id="country" 
-                                               th:value="${profile.country}">
+                                               th:field="*{country}">
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="postalCode" class="form-label">Posta Kodu</label>
                                     <input type="text" class="form-control" id="postalCode" 
-                                           th:value="${profile.postalCode}">
+                                           th:field="*{postalCode}">
                                 </div>
                             </div>
                         </div>
@@ -308,6 +300,10 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Kaydet</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -316,11 +312,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         function previewImage(input, previewId) {
-            const preview = document.getElementById(previewId);
             if (input.files && input.files[0]) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    preview.src = e.target.result;
+                    document.getElementById(previewId).src = e.target.result;
                 }
                 reader.readAsDataURL(input.files[0]);
             }
@@ -328,59 +323,22 @@
 
         function saveProfile() {
             const form = document.getElementById('profileForm');
-            if (!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
-
-            const formData = new FormData();
+            const formData = new FormData(form);
             
-            // Kişisel Bilgiler
-            formData.append('firstName', document.getElementById('firstName').value);
-            formData.append('lastName', document.getElementById('lastName').value);
-            formData.append('email', document.getElementById('email').value);
-            formData.append('phone', document.getElementById('phone').value);
-            formData.append('title', document.getElementById('title').value);
-            
-            const profileImage = document.getElementById('profileImage').files[0];
-            if (profileImage) {
-                formData.append('profileImage', profileImage);
-            }
-
-            // Şirket Bilgileri
-            formData.append('companyName', document.getElementById('companyName').value);
-            formData.append('companyWebsite', document.getElementById('companyWebsite').value);
-            formData.append('companyDescription', document.getElementById('companyDescription').value);
-            formData.append('companySize', document.getElementById('companySize').value);
-            formData.append('companyIndustry', document.getElementById('companyIndustry').value);
-            
-            const companyLogo = document.getElementById('companyLogo').files[0];
-            if (companyLogo) {
-                formData.append('companyLogo', companyLogo);
-            }
-
-            // Şirket Adresi
-            formData.append('address', document.getElementById('address').value);
-            formData.append('city', document.getElementById('city').value);
-            formData.append('country', document.getElementById('country').value);
-            formData.append('postalCode', document.getElementById('postalCode').value);
-
-            // İletişim Tercihleri
-            formData.append('emailNotifications', document.getElementById('emailNotifications').checked);
-            formData.append('smsNotifications', document.getElementById('smsNotifications').checked);
-            formData.append('applicationEmails', document.getElementById('applicationEmails').checked);
-            formData.append('marketingEmails', document.getElementById('marketingEmails').checked);
-
             fetch('/employer/profile', {
                 method: 'POST',
                 body: formData
-            }).then(response => {
+            })
+            .then(response => {
                 if (response.ok) {
-                    alert('Profil başarıyla güncellendi!');
                     window.location.reload();
                 } else {
-                    alert('Profil güncellenirken bir hata oluştu!');
+                    alert('Profil güncellenirken bir hata oluştu.');
                 }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Profil güncellenirken bir hata oluştu.');
             });
         }
     </script>

@@ -31,8 +31,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/employer/**").hasAuthority("EMPLOYER")
-                .requestMatchers("/worker/**").hasAuthority("WORKER")
+                .requestMatchers("/employer/**").hasAuthority("ROLE_EMPLOYER")
+                .requestMatchers("/worker/**").hasAuthority("ROLE_WORKER")
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -58,9 +58,9 @@ public class SecurityConfig {
             String role = authentication.getAuthorities().iterator().next().getAuthority();
             logger.info("User authenticated with role: {}", role);
             
-            if (role.equals("EMPLOYER")) {
+            if (role.equals("ROLE_EMPLOYER")) {
                 response.sendRedirect("/employer/dashboard");
-            } else if (role.equals("WORKER")) {
+            } else if (role.equals("ROLE_WORKER")) {
                 response.sendRedirect("/worker/dashboard");
             } else {
                 response.sendRedirect("/");

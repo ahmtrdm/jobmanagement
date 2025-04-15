@@ -21,4 +21,9 @@ public interface EmployerDashboardService {
     List<JobApplication> getAllApplications(String employerUsername);
     List<JobApplication> getApplicationsByJobId(Long jobId);
     EmployerProfile getEmployerProfile(String username);
+    JobPosting getJobPostingById(Long id);
+    void updateJobPosting(JobPosting jobPosting);
+    void deleteJobPosting(Long id);
+    void updateEmployerProfile(EmployerProfile profile);
+    List<JobPosting> searchJobPostings(String username, String query);
 } 

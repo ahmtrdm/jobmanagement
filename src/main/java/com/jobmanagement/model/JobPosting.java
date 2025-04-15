@@ -56,6 +56,9 @@ public class JobPosting {
     @Column(name = "employer_username", nullable = false)
     private String employerUsername;
 
+    @OneToMany(mappedBy = "jobPosting", cascade = CascadeType.ALL)
+    private List<JobApplication> applications;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -175,5 +178,13 @@ public class JobPosting {
 
     public void setEmployerUsername(String employerUsername) {
         this.employerUsername = employerUsername;
+    }
+
+    public List<JobApplication> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(List<JobApplication> applications) {
+        this.applications = applications;
     }
 } 
