@@ -20,7 +20,7 @@ ON CONFLICT (username) DO NOTHING;
 
 -- Örnek işçi profili
 INSERT INTO worker_profiles (username, first_name, last_name, phone, address, skills, experience, education)
-VALUES ('worker', 'Ahmet', 'Yılmaz', '5559876543', 'Ankara, Türkiye', 'Java, Spring Boot, SQL', '3 yıl yazılım geliştirme', 'Bilgisayar Mühendisliği')
+VALUES ('worker', 'Ahmet', 'Erdem', '5559876543', 'Ankara, Türkiye', 'Java, Spring Boot, SQL', '3 yıl yazılım geliştirme', 'Bilgisayar Mühendisliği')
 ON CONFLICT (username) DO NOTHING;
 
 -- Örnek iş ilanı

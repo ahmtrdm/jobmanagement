@@ -18,4 +18,5 @@ public interface WorkerDashboardService {
     void applyForJob(Long jobId, String username, String coverLetter);
     void updateApplicationStatus(Long applicationId, String username, String status);
     List<JobPosting> searchJobs(String username, String query);
+    List<JobPosting> getAllActiveJobs();
 } 

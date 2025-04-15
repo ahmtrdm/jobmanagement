@@ -101,7 +101,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" th:href="@{/employer/jobs}">
+                            <a class="nav-link" th:href="@{/employer/job-postings}">
                                 <i class="bi bi-briefcase"></i> İlanlarım
                             </a>
                         </li>
@@ -219,7 +219,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="companyIndustry" class="form-label">Sektör</label>
                                         <input type="text" class="form-control" id="industry" name="industry" 
-                                               th:value="${profile.industry}">
+                                               th:value="${profile.companyIndustry}">
                                     </div>
                                 </div>
                             </div>

@@ -68,10 +68,7 @@ public class WorkerDashboardController {
 
     @GetMapping("/jobs")
     public String showJobs(Model model) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-
-        model.addAttribute("jobs", workerDashboardService.getRecommendedJobs(username));
+        model.addAttribute("jobs", workerDashboardService.getAllActiveJobs());
         return "worker-jobs";
     }
 

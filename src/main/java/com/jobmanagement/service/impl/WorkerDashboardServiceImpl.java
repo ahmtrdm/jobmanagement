@@ -138,4 +138,9 @@ public class WorkerDashboardServiceImpl implements WorkerDashboardService {
                                 .anyMatch(skill -> workerSkills.contains(skill)))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<JobPosting> getAllActiveJobs() {
+        return jobPostingRepository.findByActiveTrueOrderByPostingDateDesc();
+    }
 } 

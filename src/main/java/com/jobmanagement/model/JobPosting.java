@@ -49,12 +49,12 @@ public class JobPosting {
     @Column(name = "is_active", nullable = false)
     private boolean active;
 
-    @ManyToOne
-    @JoinColumn(name = "employer_id")
-    private EmployerProfile employer;
-
-    @Column(name = "employer_username", nullable = false)
+    @Column(name = "employer_username")
     private String employerUsername;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employer_username", referencedColumnName = "username", insertable = false, updatable = false)
+    private EmployerProfile employer;
 
     @OneToMany(mappedBy = "jobPosting", cascade = CascadeType.ALL)
     private List<JobApplication> applications;

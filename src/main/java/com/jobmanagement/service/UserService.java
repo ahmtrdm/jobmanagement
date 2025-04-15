@@ -2,8 +2,10 @@ package com.jobmanagement.service;
 
 import com.jobmanagement.dto.UserRegistrationDto;
 import com.jobmanagement.exception.PasswordValidationException;
+import com.jobmanagement.model.EmployerProfile;
 import com.jobmanagement.model.Role;
 import com.jobmanagement.model.User;
+import com.jobmanagement.repository.EmployerProfileRepository;
 import com.jobmanagement.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +21,12 @@ public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmployerProfileRepository employerProfileRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, EmployerProfileRepository employerProfileRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.employerProfileRepository = employerProfileRepository;
     }
 
     private void validatePassword(String password) {
@@ -71,6 +75,12 @@ public class UserService {
         try {
             User savedUser = userRepository.save(user);
             logger.info("User registered successfully: {}", savedUser.getUsername());
+            if (savedUser.getRole().name().equals("EMPLOYER")) {
+                EmployerProfile profile = new EmployerProfile();
+                profile.setUsername(savedUser.getUsername());
+                profile.setEmail(savedUser.getEmail());
+                employerProfileRepository.save(profile);
+            }
             return savedUser;
         } catch (Exception e) {
             logger.error("Error registering user: {}", e.getMessage());
