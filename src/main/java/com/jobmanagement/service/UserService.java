@@ -1,6 +1,7 @@
 package com.jobmanagement.service;
 
 import com.jobmanagement.dto.UserRegistrationDto;
+import com.jobmanagement.exception.PasswordValidationException;
 import com.jobmanagement.model.Role;
 import com.jobmanagement.model.User;
 import com.jobmanagement.repository.UserRepository;
@@ -9,6 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -21,10 +25,33 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    private void validatePassword(String password) {
+        List<String> errors = new ArrayList<>();
+
+        if (password.length() < 6) {
+            errors.add("Şifre en az 6 karakter olmalıdır");
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            errors.add("Şifre en az 1 büyük harf içermelidir");
+        }
+        if (!password.matches(".*[a-z].*")) {
+            errors.add("Şifre en az 1 küçük harf içermelidir");
+        }
+        if (!password.matches(".*[0-9].*")) {
+            errors.add("Şifre en az 1 rakam içermelidir");
+        }
+
+        if (!errors.isEmpty()) {
+            throw new PasswordValidationException(errors);
+        }
+    }
+
     @Transactional
     public User registerUser(UserRegistrationDto registrationDto) {
         logger.info("Attempting to register user: {}", registrationDto.getUsername());
         
+        validatePassword(registrationDto.getPassword());
+
         if (userRepository.existsByUsername(registrationDto.getUsername())) {
             logger.warn("Username already exists: {}", registrationDto.getUsername());
             throw new RuntimeException("Bu kullanıcı adı zaten kullanılıyor");

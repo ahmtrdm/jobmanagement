@@ -113,7 +113,7 @@
                                         <td th:text="${job.title}">İlan Başlığı</td>
                                         <td th:text="${job.companyName}">Şirket Adı</td>
                                         <td th:text="${job.location}">Konum</td>
-                                        <td th:text="${#temporals.format(job.postedDate, 'dd/MM/yyyy')}">Yayın Tarihi</td>
+                                        <td th:text="${#temporals.format(job.postingDate, 'dd/MM/yyyy')}">Yayın Tarihi</td>
                                         <td th:text="${#temporals.format(job.expiryDate, 'dd/MM/yyyy')}">Son Başvuru</td>
                                         <td>
                                             <span class="badge" th:classappend="${job.active ? 'bg-success' : 'bg-danger'}"
@@ -123,7 +123,7 @@
                                             <a th:href="@{/employer/applications/{jobId}(jobId=${job.id})}" 
                                                class="btn btn-sm btn-info">
                                                 <i class="bi bi-people"></i>
-                                                <span th:text="${job.applicationCount}">0</span>
+                                                <span th:text="${job.applications.size()}">0</span>
                                             </a>
                                         </td>
                                         <td>

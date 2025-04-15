@@ -19,14 +19,44 @@
             color: #dc3545;
             margin-bottom: 15px;
         }
+        .password-requirements {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .requirement i {
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+        .requirement.valid {
+            color: #198754;
+        }
+        .requirement.invalid {
+            color: #dc3545;
+        }
+        .validation-errors {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+        .validation-errors li {
+            color: #dc3545;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="register-container">
             <h2 class="text-center mb-4">Kayıt Ol</h2>
-            <div th:if="${param.error}" class="error-message text-center">
-                Kayıt işlemi başarısız oldu!
+            <div id="errorContainer" class="error-message text-center" style="display: none;">
+                <div id="errorMessage"></div>
+                <ul id="validationErrors" class="validation-errors"></ul>
             </div>
             <form id="registerForm" th:action="@{/api/auth/register}" method="post">
                 <div class="mb-3">
@@ -40,6 +70,24 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Şifre</label>
                     <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="password-requirements">
+                        <div class="requirement" id="length">
+                            <i class="fas fa-times"></i>
+                            En az 6 karakter
+                        </div>
+                        <div class="requirement" id="uppercase">
+                            <i class="fas fa-times"></i>
+                            En az 1 büyük harf
+                        </div>
+                        <div class="requirement" id="lowercase">
+                            <i class="fas fa-times"></i>
+                            En az 1 küçük harf
+                        </div>
+                        <div class="requirement" id="number">
+                            <i class="fas fa-times"></i>
+                            En az 1 rakam
+                        </div>
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="role" class="form-label">Rol</label>
@@ -49,7 +97,7 @@
                     </select>
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Kayıt Ol</button>
                 </div>
                 <div class="text-center mt-3">
                     <a th:href="@{/login}" class="text-decoration-none">Zaten hesabınız var mı? Giriş yapın</a>
@@ -58,7 +106,57 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
     <script>
+        const password = document.getElementById('password');
+        const requirements = {
+            length: /.{6,}/,
+            uppercase: /[A-Z]/,
+            lowercase: /[a-z]/,
+            number: /[0-9]/
+        };
+
+        function updateRequirement(requirement, isValid) {
+            const element = document.getElementById(requirement);
+            element.classList.remove('valid', 'invalid');
+            element.classList.add(isValid ? 'valid' : 'invalid');
+            element.querySelector('i').className = `fas fa-${isValid ? 'check' : 'times'}`;
+        }
+
+        function validatePassword() {
+            const value = password.value;
+            let allValid = true;
+
+            Object.keys(requirements).forEach(requirement => {
+                const isValid = requirements[requirement].test(value);
+                updateRequirement(requirement, isValid);
+                if (!isValid) allValid = false;
+            });
+
+            document.getElementById('submitBtn').disabled = !allValid;
+        }
+
+        function showError(message, validationErrors) {
+            const errorContainer = document.getElementById('errorContainer');
+            const errorMessage = document.getElementById('errorMessage');
+            const validationErrorsList = document.getElementById('validationErrors');
+
+            errorMessage.textContent = message;
+            validationErrorsList.innerHTML = '';
+
+            if (validationErrors && validationErrors.length > 0) {
+                validationErrors.forEach(error => {
+                    const li = document.createElement('li');
+                    li.textContent = error;
+                    validationErrorsList.appendChild(li);
+                });
+            }
+
+            errorContainer.style.display = 'block';
+        }
+
+        password.addEventListener('input', validatePassword);
+
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -80,8 +178,8 @@
                 if (response.ok) {
                     return response.json();
                 } else {
-                    return response.text().then(text => {
-                        throw new Error(text);
+                    return response.json().then(data => {
+                        throw data;
                     });
                 }
             })
@@ -90,15 +188,7 @@
             })
             .catch(error => {
                 console.error('Error:', error);
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message text-center';
-                errorDiv.textContent = error.message || 'Kayıt işlemi başarısız oldu!';
-                const form = document.getElementById('registerForm');
-                const existingError = form.querySelector('.error-message');
-                if (existingError) {
-                    existingError.remove();
-                }
-                form.insertBefore(errorDiv, form.firstChild);
+                showError(error.error || 'Kayıt işlemi başarısız oldu!', error.validationErrors);
             });
         });
     </script>

@@ -19,6 +19,26 @@
             color: #dc3545;
             margin-bottom: 15px;
         }
+        .password-requirements {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+        .requirement i {
+            margin-right: 5px;
+            font-size: 0.9rem;
+        }
+        .requirement.valid {
+            color: #198754;
+        }
+        .requirement.invalid {
+            color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -26,9 +46,20 @@
         <div class="login-container">
             <h2 class="text-center mb-4">Giriş Yap</h2>
             <div th:if="${param.error}" class="error-message text-center">
-                Kullanıcı adı veya şifre hatalı!
+                <div th:if="${param.error == 'true'}">
+                    Kullanıcı adı veya şifre hatalı!
+                </div>
+                <div th:if="${param.error == 'locked'}">
+                    Hesabınız kilitlendi. Lütfen yönetici ile iletişime geçin.
+                </div>
+                <div th:if="${param.error == 'disabled'}">
+                    Hesabınız devre dışı bırakıldı.
+                </div>
+                <div th:if="${param.error == 'expired'}">
+                    Hesabınızın süresi doldu.
+                </div>
             </div>
-            <form th:action="@{/login}" method="post">
+            <form th:action="@{/login}" method="post" id="loginForm">
                 <div class="mb-3">
                     <label for="username" class="form-label">Kullanıcı Adı</label>
                     <input type="text" class="form-control" id="username" name="username" required>
@@ -36,9 +67,27 @@
                 <div class="mb-3">
                     <label for="password" class="form-label">Şifre</label>
                     <input type="password" class="form-control" id="password" name="password" required>
+                    <div class="password-requirements">
+                        <div class="requirement" id="length">
+                            <i class="fas fa-times"></i>
+                            En az 6 karakter
+                        </div>
+                        <div class="requirement" id="uppercase">
+                            <i class="fas fa-times"></i>
+                            En az 1 büyük harf
+                        </div>
+                        <div class="requirement" id="lowercase">
+                            <i class="fas fa-times"></i>
+                            En az 1 küçük harf
+                        </div>
+                        <div class="requirement" id="number">
+                            <i class="fas fa-times"></i>
+                            En az 1 rakam
+                        </div>
+                    </div>
                 </div>
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" disabled>Giriş Yap</button>
                 </div>
                 <div class="text-center mt-3">
                     <a th:href="@{/register}" class="text-decoration-none">Hesabınız yok mu? Kayıt olun</a>
@@ -47,5 +96,37 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+        const password = document.getElementById('password');
+        const requirements = {
+            length: /.{6,}/,
+            uppercase: /[A-Z]/,
+            lowercase: /[a-z]/,
+            number: /[0-9]/
+        };
+
+        function updateRequirement(requirement, isValid) {
+            const element = document.getElementById(requirement);
+            element.classList.remove('valid', 'invalid');
+            element.classList.add(isValid ? 'valid' : 'invalid');
+            element.querySelector('i').className = `fas fa-${isValid ? 'check' : 'times'}`;
+        }
+
+        function validatePassword() {
+            const value = password.value;
+            let allValid = true;
+
+            Object.keys(requirements).forEach(requirement => {
+                const isValid = requirements[requirement].test(value);
+                updateRequirement(requirement, isValid);
+                if (!isValid) allValid = false;
+            });
+
+            document.getElementById('submitBtn').disabled = !allValid;
+        }
+
+        password.addEventListener('input', validatePassword);
+    </script>
 </body>
 </html> 

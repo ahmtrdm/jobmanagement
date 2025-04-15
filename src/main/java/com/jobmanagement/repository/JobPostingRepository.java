@@ -24,4 +24,8 @@ public interface JobPostingRepository extends JpaRepository<JobPosting, Long> {
         @Param("location") String location,
         @Param("experienceLevel") String experienceLevel
     );
+
+    List<JobPosting> findByEmployerUsername(String employerUsername);
+    List<JobPosting> findTop5ByEmployerUsernameOrderByPostingDateDesc(String employerUsername);
+    int countByEmployerUsernameAndActiveTrue(String employerUsername);
 } 

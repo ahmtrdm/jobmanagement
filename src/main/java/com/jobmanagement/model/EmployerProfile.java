@@ -36,6 +36,33 @@ public class EmployerProfile {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "company_size")
+    private String companySize;
+
+    @Column(name = "company_industry")
+    private String companyIndustry;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "postal_code")
+    private String postalCode;
+
+    @Column(name = "email_notifications")
+    private boolean emailNotifications;
+
+    @Column(name = "sms_notifications")
+    private boolean smsNotifications;
+
+    @Column(name = "application_emails")
+    private boolean applicationEmails;
+
+    @Column(name = "marketing_emails")
+    private boolean marketingEmails;
+
     @OneToMany(mappedBy = "employer", cascade = CascadeType.ALL)
     private List<JobPosting> jobPostings;
 } 

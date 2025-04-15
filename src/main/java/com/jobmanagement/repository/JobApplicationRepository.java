@@ -8,10 +8,13 @@ import java.util.List;
 
 @Repository
 public interface JobApplicationRepository extends JpaRepository<JobApplication, Long> {
-    List<JobApplication> findByJobPostingEmployerUsername(String username);
-    List<JobApplication> findByJobPostingEmployerUsernameAndStatus(String username, String status);
-    List<JobApplication> findByJobPostingEmployerUsernameOrderByApplicationDateDesc(String username);
-    List<JobApplication> findByWorkerUsernameOrderByApplicationDateDesc(String username);
-    List<JobApplication> findTop5ByWorkerUsernameOrderByApplicationDateDesc(String username);
-    int countByWorkerUsernameAndStatus(String username, String status);
+    List<JobApplication> findByJobPosting_EmployerUsername(String employerUsername);
+    List<JobApplication> findTop5ByJobPosting_EmployerUsernameOrderByApplicationDateDesc(String employerUsername);
+    List<JobApplication> findByJobPosting_Id(Long jobId);
+    int countByJobPosting_EmployerUsername(String employerUsername);
+    int countByJobPosting_EmployerUsernameAndStatus(String employerUsername, String status);
+    List<JobApplication> findByJobPostingEmployerUsername(String employerUsername);
+    List<JobApplication> findByJobPostingEmployerUsernameAndStatus(String employerUsername, String status);
+    List<JobApplication> findByJobPostingEmployerUsernameOrderByApplicationDateDesc(String employerUsername);
+    List<JobApplication> findByJobPostingIdOrderByApplicationDateDesc(Long jobId);
 } 

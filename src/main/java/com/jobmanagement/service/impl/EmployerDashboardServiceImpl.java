@@ -69,6 +69,11 @@ public class EmployerDashboardServiceImpl implements EmployerDashboardService {
     }
 
     @Override
+    public List<JobApplication> getApplicationsByJobId(Long jobId) {
+        return jobApplicationRepository.findByJobPostingIdOrderByApplicationDateDesc(jobId);
+    }
+
+    @Override
     public EmployerProfile getEmployerProfile(String username) {
         return employerProfileRepository.findByUsername(username);
     }

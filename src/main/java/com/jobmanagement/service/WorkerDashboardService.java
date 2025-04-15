@@ -14,4 +14,5 @@ public interface WorkerDashboardService {
     List<JobPosting> getRecommendedJobs(String username);
     List<JobApplication> getAllApplications(String username);
     WorkerProfile getWorkerProfile(String username);
+    WorkerProfile saveWorkerProfile(WorkerProfile profile);
 } 

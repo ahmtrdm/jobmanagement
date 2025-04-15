@@ -8,19 +8,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping("/worker")
 public class WorkerDashboardController {
 
     private final WorkerDashboardService workerDashboardService;
+    private final ObjectMapper objectMapper;
 
     public WorkerDashboardController(WorkerDashboardService workerDashboardService) {
         this.workerDashboardService = workerDashboardService;
+        this.objectMapper = new ObjectMapper();
     }
 
     @GetMapping("/dashboard")
@@ -96,5 +100,69 @@ public class WorkerDashboardController {
 
         model.addAttribute("profile", profile);
         return "worker-profile";
+    }
+
+    @PostMapping("/profile")
+    public String updateProfile(
+            @RequestParam("fullName") String fullName,
+            @RequestParam("email") String email,
+            @RequestParam(value = "phone", required = false) String phone,
+            @RequestParam(value = "address", required = false) String address,
+            @RequestParam(value = "skills", required = false) String skillsJson,
+            @RequestParam(value = "jobTypes", required = false) String[] jobTypes,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage,
+            @RequestParam(value = "resume", required = false) MultipartFile resume) {
+        
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            String username = auth.getName();
+
+            WorkerProfile profile = workerDashboardService.getWorkerProfile(username);
+            if (profile == null) {
+                profile = new WorkerProfile();
+                profile.setUsername(username);
+            }
+
+            profile.setFullName(fullName);
+            profile.setEmail(email);
+            profile.setPhone(phone);
+            profile.setAddress(address);
+
+            // Parse skills from JSON
+            if (skillsJson != null && !skillsJson.isEmpty()) {
+                try {
+                    List<String> skills = objectMapper.readValue(skillsJson, List.class);
+                    profile.setSkills(skills);
+                } catch (Exception e) {
+                    // If JSON parsing fails, set empty list
+                    profile.setSkills(List.of());
+                }
+            } else {
+                profile.setSkills(List.of());
+            }
+
+            // Set job types
+            if (jobTypes != null && jobTypes.length > 0) {
+                profile.setJobTypes(Arrays.asList(jobTypes));
+            } else {
+                profile.setJobTypes(List.of());
+            }
+
+            // Handle file uploads if present
+            if (profileImage != null && !profileImage.isEmpty()) {
+                // TODO: Implement file upload logic
+                // profile.setImageUrl(...);
+            }
+
+            if (resume != null && !resume.isEmpty()) {
+                // TODO: Implement resume upload logic
+                // profile.setResumeUrl(...);
+            }
+
+            workerDashboardService.saveWorkerProfile(profile);
+            return "redirect:/worker/profile?success=true";
+        } catch (Exception e) {
+            return "redirect:/worker/profile?error=" + e.getMessage();
+        }
     }
 } 

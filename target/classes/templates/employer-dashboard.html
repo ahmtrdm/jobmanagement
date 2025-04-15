@@ -133,7 +133,7 @@
                                         <tbody>
                                             <tr th:each="job : ${recentJobPostings}">
                                                 <td th:text="${job.title}">İlan Başlığı</td>
-                                                <td th:text="${#temporals.format(job.postedDate, 'dd/MM/yyyy')}">Tarih</td>
+                                                <td th:text="${#temporals.format(job.postingDate, 'dd/MM/yyyy')}">Tarih</td>
                                                 <td>
                                                     <span class="badge" th:classappend="${job.active ? 'bg-success' : 'bg-danger'}"
                                                           th:text="${job.active ? 'Aktif' : 'Pasif'}">Durum</span>

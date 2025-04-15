@@ -13,46 +13,47 @@ public class JobPosting {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title")
+    @Column(nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(nullable = false, length = 1000)
     private String description;
 
-    @Column(name = "company_name")
+    @Column(name = "company_name", nullable = false)
     private String companyName;
 
-    @Column(name = "location")
+    @Column(nullable = false)
     private String location;
 
-    @Column(name = "salary")
+    @Column(nullable = false)
     private String salary;
 
-    @Column(name = "job_type")
+    @Column(name = "job_type", nullable = false)
     private String jobType;
 
-    @Column(name = "experience_level")
+    @Column(name = "experience_level", nullable = false)
     private String experienceLevel;
 
-    @ElementCollection
-    @CollectionTable(name = "job_posting_skills", joinColumns = @JoinColumn(name = "job_posting_id"))
-    @Column(name = "skill")
-    private List<String> requiredSkills;
+    @Column(name = "required_skills", nullable = false, length = 1000)
+    private String requiredSkills;
 
-    @Column(name = "posting_date")
+    @Column(name = "posting_date", nullable = false)
     private LocalDate postingDate;
 
-    @Column(name = "expiry_date")
+    @Column(name = "expiry_date", nullable = false)
     private LocalDate expiryDate;
 
-    @Column(name = "is_active")
+    @Column(name = "application_deadline", nullable = false)
+    private LocalDate applicationDeadline;
+
+    @Column(name = "is_active", nullable = false)
     private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "employer_id")
     private EmployerProfile employer;
 
-    @Column(name = "employer_username")
+    @Column(name = "employer_username", nullable = false)
     private String employerUsername;
 
     // Getters and Setters
@@ -120,11 +121,11 @@ public class JobPosting {
         this.experienceLevel = experienceLevel;
     }
 
-    public List<String> getRequiredSkills() {
+    public String getRequiredSkills() {
         return requiredSkills;
     }
 
-    public void setRequiredSkills(List<String> requiredSkills) {
+    public void setRequiredSkills(String requiredSkills) {
         this.requiredSkills = requiredSkills;
     }
 
@@ -142,6 +143,14 @@ public class JobPosting {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public LocalDate getApplicationDeadline() {
+        return applicationDeadline;
+    }
+
+    public void setApplicationDeadline(LocalDate applicationDeadline) {
+        this.applicationDeadline = applicationDeadline;
     }
 
     public boolean isActive() {

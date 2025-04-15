@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Arrays;
 
 @Service
 public class WorkerDashboardServiceImpl implements WorkerDashboardService {
@@ -71,7 +72,8 @@ public class WorkerDashboardServiceImpl implements WorkerDashboardService {
         List<String> workerSkills = profile.getSkills();
         return jobPostingRepository.findAll().stream()
                 .filter(posting -> posting.isActive() && 
-                        posting.getRequiredSkills().stream()
+                        Arrays.asList(posting.getRequiredSkills().split(",")).stream()
+                                .map(String::trim)
                                 .anyMatch(skill -> workerSkills.contains(skill)))
                 .limit(5)
                 .collect(Collectors.toList());
@@ -88,5 +90,10 @@ public class WorkerDashboardServiceImpl implements WorkerDashboardService {
     @Override
     public WorkerProfile getWorkerProfile(String username) {
         return workerProfileRepository.findByUsername(username);
+    }
+
+    @Override
+    public WorkerProfile saveWorkerProfile(WorkerProfile profile) {
+        return workerProfileRepository.save(profile);
     }
 } 
