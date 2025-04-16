@@ -1,5 +1,9 @@
+-- Insert initial data
+INSERT INTO users (username, password, email, role) VALUES
+('admin', '$2a$10$X7G3YFv2J5Z5Z5Z5Z5Z5Z.Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z5Z', 'admin@example.com', 'ADMIN')
+ON CONFLICT (username) DO NOTHING;
+
 -- USERS
-INSERT INTO users (username, password, email, role) VALUES ('admin', '$2a$10$X7G3Y5H2U6I9K0L1M4N7P8Q9R0S1T2U3V4W5X6Y7Z8A9B0C1D2E3F4G5H6', 'admin@example.com', 'ADMIN') ON CONFLICT (username) DO NOTHING;
 INSERT INTO users (username, password, email, role) VALUES ('employer1', '$2a$10$X7G3Y5H2U6I9K0L1M4N7P8Q9R0S1T2U3V4W5X6Y7Z8A9B0C1D2E3F4G5H6', 'employer1@example.com', 'EMPLOYER') ON CONFLICT (username) DO NOTHING;
 INSERT INTO users (username, password, email, role) VALUES ('worker1', '$2a$10$X7G3Y5H2U6I9K0L1M4N7P8Q9R0S1T2U3V4W5X6Y7Z8A9B0C1D2E3F4G5H6', 'worker1@example.com', 'WORKER') ON CONFLICT (username) DO NOTHING;
 
